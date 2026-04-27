@@ -1,0 +1,69 @@
+hive
+
+CREATE DATABASE IF NOT EXISTS hospital_db;
+USE hospital_db;
+
+CREATE TABLE IF NOT EXISTS patient (
+    patient_id INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    disease STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+patients.txt
+1,John,30,M,Flu
+2,Alice,25,F,Covid
+3,Bob,40,M,Malaria
+
+LOAD DATA LOCAL INPATH '/home/cloudera/Desktop/patients.txt' INTO TABLE patient;
+
+INSERT INTO TABLE patient VALUES (4, 'Sara', 35, 'F', 'Dengue');
+
+ALTER TABLE patient ADD COLUMNS (contact STRING);
+
+INSERT INTO TABLE patient VALUES (5, 'Rahul', 28, 'M', 'Typhoid', '9876543210');
+
+CREATE TABLE IF NOT EXISTS hospital (
+    patient_id INT,
+    hospital_name STRING,
+    city STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+hospital.txt
+1,Apollo,Mumbai
+2,Fortis,Pune
+3,AIIMS,Delhi
+4,Max,Chennai
+5,Wockhardt,Nashik
+
+
+LOAD DATA LOCAL INPATH '/home/cloudera/Desktop/hospital.txt' INTO TABLE hospital;
+
+SELECT p.patient_id, p.name, p.disease, h.hospital_name, h.city
+FROM patient p
+JOIN hospital h ON (p.patient_id = h.patient_id);
+
+
+
+
+[external table only 
+
+CREATE EXTERNAL TABLE IF NOT EXISTS employee_external (
+    emp_id INT,
+    emp_name STRING,
+    emp_designation STRING,
+    dept STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '/user/cloudera/employee_external';]

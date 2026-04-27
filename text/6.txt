@@ -1,0 +1,65 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('/content/forestfires.csv')
+
+df.head()
+df.info()
+df.describe()
+df.shape
+
+df1 = df[['X', 'Y', 'month', 'day']]
+df1
+
+df2 = df[['FFMC', 'DMC','DC', 'temp']]
+df2
+
+df3 = df[['temp', 'wind', 'rain', 'area']]
+df3
+
+merging=pd.concat([df1,df2,df3])
+merging
+
+sort_values=df.sort_values('X', ascending=True)
+sort_values
+
+sort_values=df.sort_values('RH', ascending=True)
+sort_values
+
+df.transpose()
+
+shaping=df.shape
+shaping
+
+pivot_table=pd.pivot_table(df,index=['wind','area'], values='RH')
+pivot_table
+
+reshaping_arr=np.array([1,2,3,4,5,6])
+reshaping_arr.reshape(3,2)
+
+df_integration=pd.concat([df1,df2])
+df_integration
+
+df_integration.transpose()
+
+df.drop(columns='FFMC')
+
+df_merge=pd.concat([df1,df2])
+df_merge
+
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model, metrics
+x=df[["X"]]
+y=df["temp"]
+
+
+x_train, x_test, y_train, y_test=train_test_split(x,y,test_size=0.2, random_state=42)
+
+len(x_train)
+
+len(x_test)
+
+df.shape
+
+reg=linear_model.LinearRegression()
+

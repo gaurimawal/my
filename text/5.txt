@@ -1,0 +1,108 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+
+heart= pd.read_csv("heart.csv")
+
+air_quality = pd.read_csv("airquality.csv")
+
+print("Air Quality Dataset")
+print(air_quality.head())
+
+print("Heart Disease Dataset")
+print(heart.head())
+
+air_quality.head()
+
+heart.fillna(heart.mode().iloc[0],inplace=True)
+
+
+air_quality.fillna(air_quality.mode().iloc[0],inplace=True)
+
+air_quality.drop_duplicates(inplace=True)
+heart.drop_duplicates(inplace=True)
+
+
+print("Data Cleaning Done")
+
+air_quality.columns
+
+heart.columns
+
+data = pd.merge(air_quality, heart,on="region" , how="inner")
+
+data.columns
+
+print("Merged Data")
+print(data.head())
+
+
+# Convert the column to strings
+data = data.astype(str)
+
+encoder = LabelEncoder()
+for col in data.select_dtypes(include=['object']).columns:
+    data[col] = encoder.fit_transform(data[col])
+
+data.head()
+
+scaler = StandardScaler()
+data[data.columns] = scaler.fit_transform(data)
+print("Data Transformation Done")
+
+from scipy.stats import zscore
+
+data = data[(np.abs(zscore(data))<3).all(axis=1)]
+print("Data Error Correction Done")
+
+data
+
+
+x= data.drop(columns=['target'])
+y= data['target']
+
+y = y.round().astype(int)  # Convert to nearest integer if it's continuous
+
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2, random_state=42)
+
+model = RandomForestClassifier()
+model.fit(x_train,y_train)
+
+
+y_pred = model.predict(x_test)
+
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy:{accuracy:.2f}")
+
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt='d',cmap='Blues')
+plt.ylabel("Actual")
+plt.xlabel("Predicted")
+plt.title("Confusion Matrix")
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
