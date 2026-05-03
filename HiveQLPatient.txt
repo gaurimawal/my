@@ -1,0 +1,73 @@
+Pre-requisites (Cloudera VM)
+# Start Hadoop
+start-all.sh
+
+# Start Hive shell
+hive
+3. Database Creation
+CREATE DATABASE hospital_db;
+USE hospital_db;
+A. Create Tables
+1. Patient Table
+CREATE TABLE patient (
+    patient_id INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    disease STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+2. Doctor Table (for Join)
+CREATE TABLE doctor (
+    doctor_id INT,
+    doctor_name STRING,
+    specialization STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+3. Appointment Table (for Join)
+CREATE TABLE appointment (
+    patient_id INT,
+    doctor_id INT,
+    visit_date STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+B. Load Table with Data
+Step 1: Create CSV file in Linux
+nano patient.csv
+
+Sample Data:
+
+1,John,25,M,Flu
+2,Alice,30,F,Diabetes
+3,Rahul,40,M,Heart Disease
+Step 2: Move file to HDFS
+hdfs dfs -put patient.csv /user/cloudera/
+Step 3: Load into Hive Table
+LOAD DATA INPATH '/user/cloudera/patient.csv'
+INTO TABLE patient;
+C. Insert New Values and Add Field
+1. Insert New Records
+INSERT INTO patient VALUES (4,'Neha',28,'F','Asthma');
+2. Add New Column (Schema Evolution)
+ALTER TABLE patient ADD COLUMNS (city STRING);
+3. Insert Data with New Field
+INSERT INTO patient VALUES (5,'Amit',35,'M','Cancer','Pune');
+D. Join Tables in Hive
+Load sample data into doctor & appointment similarly
+Perform Join Query
+SELECT p.name, p.disease, d.doctor_name, d.specialization, a.visit_date
+FROM patient p
+JOIN appointment a ON (p.patient_id = a.patient_id)
+JOIN doctor d ON (a.doctor_id = d.doctor_id);
+4. Output Verification
+SELECT * FROM patient;
+SELECT * FROM doctor;
+SELECT * FROM appointment;
+
+
