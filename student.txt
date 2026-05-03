@@ -1,0 +1,63 @@
+Create Database (Student Management)
+CREATE DATABASE student_db;
+SHOW DATABASES;
+USE student_db;
+3. Create Table (Student Record)
+Managed Table
+CREATE TABLE student (
+    id INT,
+    name STRING,
+    age INT,
+    course STRING,
+    marks INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+Verify
+SHOW TABLES;
+DESCRIBE student;
+4. Alter Table Operations
+Add Column
+ALTER TABLE student ADD COLUMNS (grade STRING);
+Rename Table
+ALTER TABLE student RENAME TO student_info;
+Modify Column
+ALTER TABLE student_info CHANGE age age INT;
+5. Load Data into Table
+Step 1: Create Data File (inside VM)
+nano student_data.txt
+
+Add sample data:
+
+1,John,20,CS,85,A
+2,Alice,21,IT,90,A
+3,Bob,19,ENTC,75,B
+4,Eve,22,CS,88,A
+Step 2: Load into Hive Table
+LOAD DATA LOCAL INPATH '/home/cloudera/student_data.txt'
+INTO TABLE student_info;
+Verify Data
+SELECT * FROM student_info;
+6. Create External Table
+
+External tables store metadata in Hive but data remains in HDFS.
+
+Step 1: Move File to HDFS
+hdfs dfs -mkdir /user/cloudera/student_ext
+hdfs dfs -put student_data.txt /user/cloudera/student_ext/
+Step 2: Create External Table
+CREATE EXTERNAL TABLE student_external (
+    id INT,
+    name STRING,
+    age INT,
+    course STRING,
+    marks INT,
+    grade STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '/user/cloudera/student_ext/';
+Verify
+SELECT * FROM student_external;
