@@ -1,0 +1,72 @@
+HiveQL Application: Employee Information System
+A. Database and Table Operations
+1. Create Database
+CREATE DATABASE IF NOT EXISTS company_db;
+USE company_db;
+2. Create Table 1 (Employee Details)
+CREATE TABLE IF NOT EXISTS employee (
+    EmpID INT,
+    EmpName STRING,
+    EmpDesignation STRING,
+    Dept STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+3. Create Table 2 (Salary Details)
+CREATE TABLE IF NOT EXISTS emp_salary (
+    EmpID INT,
+    Salary FLOAT,
+    Leaves_Taken INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+4. Alter Table (Add New Column)
+ALTER TABLE employee ADD COLUMNS (Joining_Date STRING);
+5. Drop Table (if needed)
+DROP TABLE IF EXISTS emp_salary;
+B. Create External Hive Table
+CREATE EXTERNAL TABLE IF NOT EXISTS employee_ext (
+    EmpID INT,
+    EmpName STRING,
+    EmpDesignation STRING,
+    Dept STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION '/user/hive/external/employee_data';
+C. Data Loading and Manipulation
+1. Load Data into Tables (HDFS path)
+LOAD DATA INPATH '/user/hive/employee.txt'
+INTO TABLE employee;
+
+LOAD DATA INPATH '/user/hive/emp_salary.txt'
+INTO TABLE emp_salary;
+2. Insert New Values
+INSERT INTO employee VALUES
+(101, 'Amit', 'Manager', 'HR', '2020-01-10');
+
+INSERT INTO emp_salary VALUES
+(101, 50000, 5);
+3. Insert Data into External Table
+LOAD DATA INPATH '/user/hive/employee_ext.txt'
+INTO TABLE employee_ext;
+D. Join Operation (Employee + Salary)
+Inner Join
+SELECT e.EmpID, e.EmpName, e.EmpDesignation, e.Dept,
+       s.Salary, s.Leaves_Taken
+FROM employee e
+JOIN emp_salary s
+ON e.EmpID = s.EmpID;
+Left Join (to include all employees)
+SELECT e.EmpID, e.EmpName, e.Dept,
+       s.Salary, s.Leaves_Taken
+FROM employee e
+LEFT JOIN emp_salary s
+ON e.EmpID = s.EmpID;
+Execution Workflow on Cloudera (High-Level)
+Start Hadoop & Hive services
+Place data files in HDFS:
+hdfs dfs -put employee.txt /user/hive/
+hdfs dfs -put emp_salary.txt /user/hive/
