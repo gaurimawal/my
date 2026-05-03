@@ -1,0 +1,90 @@
+A. Database and Table Operations (Create, Alter, Drop)
+-- Create Database
+CREATE DATABASE student_db;
+
+-- Use Database
+USE student_db;
+
+-- Create Table 1: Student Info
+CREATE TABLE student_info (
+    stu_id INT,
+    stu_name STRING,
+    stu_branch STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+-- Create Table 2: Marks Info
+CREATE TABLE student_marks (
+    stu_id INT,
+    subject STRING,
+    marks INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+Alter Table Example:
+
+-- Add new column
+ALTER TABLE student_info ADD COLUMNS (stu_age INT);
+
+-- Rename table
+ALTER TABLE student_marks RENAME TO marks_info;
+
+Drop Table Example:
+
+DROP TABLE marks_info;
+B. Load Data into Tables
+
+Assume data files are present in HDFS:
+
+student_info.txt
+
+1,John,Computer
+2,Alice,IT
+3,Bob,Mechanical
+4,Emma,Computer
+
+student_marks.txt
+
+1,DBMS,85
+2,OS,78
+3,Maths,90
+4,DBMS,82
+-- Load data into student_info
+LOAD DATA INPATH '/user/cloudera/student_info.txt'
+INTO TABLE student_info;
+
+-- Load data into student_marks
+LOAD DATA INPATH '/user/cloudera/student_marks.txt'
+INTO TABLE student_marks;
+C. Join Tables (Student + Marks)
+SELECT s.stu_id, s.stu_name, s.stu_branch,
+       m.subject, m.marks
+FROM student_info s
+JOIN student_marks m
+ON s.stu_id = m.stu_id;
+D. Students with Marks > 80
+SELECT s.stu_id, s.stu_name, s.stu_branch,
+       m.subject, m.marks
+FROM student_info s
+JOIN student_marks m
+ON s.stu_id = m.stu_id
+WHERE m.marks > 80;
+Expected Output (Marks > 80)
+stu_id	stu_name	branch	subject	marks
+1	John	Computer	DBMS	85
+3	Bob	Mechanical	Maths	90
+4	Emma	Computer	DBMS	82
+Execution Notes (Cloudera Environment)
+
+Ensure files are uploaded using:
+
+hdfs dfs -put student_info.txt /user/cloudera/
+hdfs dfs -put student_marks.txt /user/cloudera/
+
+Use Hive shell:
+
+hive
