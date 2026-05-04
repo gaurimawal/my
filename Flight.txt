@@ -1,0 +1,55 @@
+A. Create Table
+CREATE DATABASE IF NOT EXISTS flight_db;
+USE flight_db;
+
+CREATE TABLE flight_info (
+    year INT,
+    month INT,
+    day INT,
+    dep_time INT,
+    dep_delay INT,
+    arr_time INT,
+    arr_delay INT,
+    carrier STRING,
+    flight_num INT,
+    origin STRING,
+    dest STRING,
+    distance INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+B. Load Table with Data
+LOAD DATA LOCAL INPATH '/home/cloudera/flight_data.csv'
+INTO TABLE flight_info;
+
+Note: Ensure CSV file matches table schema.
+
+C. Create Index on Flight Information Table
+CREATE INDEX idx_flight_origin
+ON TABLE flight_info (origin)
+AS 'COMPACT'
+WITH DEFERRED REBUILD;
+
+-- Build the index
+ALTER INDEX idx_flight_origin ON flight_info REBUILD;
+D. Find Average Departure Delay Per Day in 2008
+SELECT 
+    year,
+    month,
+    day,
+    AVG(dep_delay) AS avg_departure_delay
+FROM flight_info
+WHERE year = 2008
+GROUP BY year, month, day
+ORDER BY month, day;
+Outcome Summary
+Table created to store flight-level operational data
+Data ingestion completed via local file load
+Index implemented to optimize query performance on origin-based filtering
+Analytical query delivers daily average departure delay for 2008
+Viva Key Points
+Hive Index improves query performance (though limited in newer Hive versions)
+LOAD DATA is faster as it moves file into HDFS
+AVG() + GROUP BY used for aggregation
+Data warehouse approach supports large-scale flight analytics
