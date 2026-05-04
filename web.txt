@@ -1,0 +1,81 @@
+import requests
+from bs4 import BeautifulSoup
+
+
+url = "https://books.toscrape.com/catalogue/page-1.html"
+
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.content, "html.parser")
+
+
+
+books = soup.find_all("article", class_="product_pod")
+
+
+
+for book in books:
+    title = book.h3.a["title"]
+    price = book.find("p", class_="price_color").text.strip()
+    availability = book.find("p", class_="instock availability").text.strip()
+
+    print(f"Title: {title}")
+    print(f"Price: {price}")
+    print(f"Availability: {availability}")
+    print("-" * 50)
+
+
+soup
+
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://books.toscrape.com/catalogue/page-1.html"
+base_url = "https://books.toscrape.com/"
+
+response = requests.get(url)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# Find all image tags inside books
+images = soup.find_all("img")
+
+for img in images:
+    img_src = img.get("src")
+    
+    # Convert relative URL to absolute URL
+    full_img_url = base_url + img_src.replace("../../", "")
+    
+    print(full_img_url)
+================================================================================
+import requests
+import bs4
+request1 = requests.get("https://www.amazon.in/X14STORE-Creative-Engraved-Decoration-Birthday/dp/B0DP8YF7MK/?_encoding=UTF8&pd_rd_w=hmNl4&content-id=amzn1.sym.31b48b2d-9c5c-4998-a8bc-a35f263d0c8b&pf_rd_p=31b48b2d-9c5c-4998-a8bc-a35f263d0c8b&pf_rd_r=ZNN7M94X7QAFF0YCP5WP&pd_rd_wg=FwNqr&pd_rd_r=766aed34-6b28-479a-a418-b64afed3e614&ref_=pd_hp_d_btf_NAMBOTTLES&th=1")
+request1.content
+soup=bs4.BeautifulSoup(request1.text)
+print(soup)
+rating=soup.find('span',{'class':'a-size-small a-color-base'}).get_text();
+print(rating)
+reviews=soup.find_all('div',{'class':'a-expander-content reviewText review-text-content a-expander-partial-collapse-content'});
+for review in reviews:
+  print(review.get_text()+"\n\n")
+individual_rating=soup.find_all('i',{'class':'a-icon a-icon-star a-star-5 review-rating'});
+for individual_r in individual_rating:
+  print(individual_r.get_text()+"\n")
+
+customer_name=soup.find_all('span',{'class':'a-profile-name'});
+for cust in customer_name:
+  print(cust.get_text()+"\n")
+
+from IPython.display import Image,display
+
+imgs=soup.find_all('img',class_='a-dynamic-image a-stretch-horizontal media-block-image-tag')
+for img in imgs:
+  img_url = img['src']
+  print(img_url)
+  display(Image(url=img_url))
