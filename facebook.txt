@@ -1,0 +1,66 @@
+# Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+df = pd.read_csv('dataset_Facebook.csv', sep=';')
+
+# Display basic info
+print(df.head())
+print(df.info())
+
+# -----------------------------
+# 1. Box Plot
+# -----------------------------
+plt.figure()
+sns.boxplot(x=df['like'])
+plt.title('Box Plot of Likes')
+plt.show()
+
+# -----------------------------
+# 2. Histogram
+# -----------------------------
+plt.figure()
+plt.hist(df['Total Interactions'], bins=20)
+plt.title('Histogram of Total Interactions')
+plt.xlabel('Total Interactions')
+plt.ylabel('Frequency')
+plt.show()
+
+# -----------------------------
+# 3. Single Line Graph
+# -----------------------------
+plt.figure()
+plt.plot(df['like'])
+plt.title('Single Line Graph of Likes')
+plt.xlabel('Index')
+plt.ylabel('Likes')
+plt.show()
+
+# -----------------------------
+# 4. Multiple Line Graph
+# -----------------------------
+plt.figure()
+plt.plot(df['like'], label='Likes')
+plt.plot(df['share'], label='Shares')
+plt.plot(df['comment'], label='Comments')
+plt.title('Multiple Line Graph')
+plt.xlabel('Index')
+plt.ylabel('Count')
+plt.legend()
+plt.show()
+
+import pandas as pd
+import numpy as np
+df = pd.read_csv("dataset_Facebook.csv",sep=";")
+df.describe()
+df.info()
+df.shape
+df.transpose()
+sort_values = df.sort_values("Page total likes")
+subset1 = df[[ 'Type', 'Category', 'Post Month','like']]
+subset1
+subset2 = df[[ 'Type', 'Category', 'comment','share']]
+subset1
+merge_df = pd.merge(subset1,subset2, on = ['Type','Category'])
