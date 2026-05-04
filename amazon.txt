@@ -1,0 +1,77 @@
+1. Setup (Common for all operations)
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv("amazon_book_reviews.csv")
+
+# Display first rows
+print(df.head())
+
+# Check structure
+print(df.info())
+PART A: ROW-WISE OPERATIONS
+1) Create Data Subsets (Row-wise)
+
+Select specific rows using slicing or conditions.
+
+# First 100 rows
+subset1 = df.iloc[:100]
+
+# Rows where rating > 4
+subset2 = df[df['rating'] > 4]
+
+print(subset1.head())
+print(subset2.head())
+2) Merge Data (Row-wise)
+
+Use concat() to append rows.
+
+merged_rows = pd.concat([subset1, subset2], axis=0)
+
+print(merged_rows.shape)
+3) Sort Data
+# Sort by rating (descending)
+sorted_df = df.sort_values(by='rating', ascending=False)
+
+print(sorted_df.head())
+4) Transpose Data
+transposed_df = df.T
+
+print(transposed_df.head())
+5) Reshape Data
+# Using melt (wide → long)
+reshaped_df = pd.melt(df, id_vars=['review_id'], value_vars=['rating'])
+
+print(reshaped_df.head())
+PART B: COLUMN-WISE OPERATIONS
+1) Create Data Subsets (Column-wise)
+# Select specific columns
+col_subset = df[['review_id', 'rating', 'review_text']]
+
+print(col_subset.head())
+2) Merge Data (Column-wise)
+
+Use concat() with axis = 1
+
+df1 = df[['review_id', 'rating']]
+df2 = df[['review_text']]
+
+merged_cols = pd.concat([df1, df2], axis=1)
+
+print(merged_cols.head())
+3) Sort Data
+# Sort by review length
+df['review_length'] = df['review_text'].apply(len)
+
+sorted_df = df.sort_values(by='review_length', ascending=False)
+
+print(sorted_df.head())
+4) Transpose Data
+transpose_cols = col_subset.T
+
+print(transpose_cols)
+5) Reshape Data
+# Pivot example
+pivot_df = df.pivot_table(values='rating', index='review_id')
+
+print(pivot_df.head())
